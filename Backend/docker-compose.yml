@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: platziflix_user
+      POSTGRES_PASSWORD: platziflix_password
+      POSTGRES_DB: platziflix_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U platziflix_user -d platziflix_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app/app
+    environment:
+      - DATABASE_URL=postgresql://platziflix_user:platziflix_password@db:5432/platziflix_db
+      - PROJECT_NAME=Platziflix
+      - VERSION=1.0.0
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data: 
