@@ -11,6 +11,7 @@ RUN pip install uv
 COPY pyproject.toml uv.lock README.md ./
 
 # Install dependencies
+ENV UV_PROJECT_ENVIRONMENT="/usr/local/"
 RUN uv sync --frozen
 
 # Copy application code
