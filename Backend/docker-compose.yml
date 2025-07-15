@@ -15,12 +15,8 @@ services:
       timeout: 5s
       retries: 5
 
-  api:
+  db-init:
     build: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./app:/app/app
     environment:
       - DATABASE_URL=postgresql://platziflix_user:platziflix_password@db:5432/platziflix_db
       - PROJECT_NAME=Platziflix
@@ -28,6 +24,25 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    command: ["init-db"]
+    restart: "no"
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app/app
+      - ./specs:/app/specs
+    environment:
+      - DATABASE_URL=postgresql://platziflix_user:platziflix_password@db:5432/platziflix_db
+      - PROJECT_NAME=Platziflix
+      - VERSION=1.0.0
+    depends_on:
+      db:
+        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
 
 volumes:
   postgres_data: 

@@ -1,4 +1,4 @@
-.PHONY: start stop restart build logs clean help
+.PHONY: start stop restart build logs clean help seed init-db
 
 # Comando principal para iniciar el entorno de desarrollo
 start:
@@ -20,6 +20,14 @@ build:
 logs:
 	docker compose logs -f
 
+# Inicializar la base de datos (crear tablas y ejecutar seed)
+init-db:
+	docker compose run --rm db-init
+
+# Ejecutar solo el seed (poblar con datos de ejemplo)
+seed:
+	docker compose run --rm api seed
+
 # Limpiar contenedores, volúmenes e imágenes
 clean:
 	docker compose down -v --rmi all --remove-orphans
@@ -32,6 +40,8 @@ help:
 	@echo "  make restart  - Reiniciar los contenedores"
 	@echo "  make build    - Construir las imágenes"
 	@echo "  make logs     - Ver logs de los contenedores"
+	@echo "  make init-db  - Inicializar base de datos (crear tablas + seed)"
+	@echo "  make seed     - Ejecutar solo el seed (poblar datos)"
 	@echo "  make clean    - Limpiar contenedores y volúmenes"
 	@echo "  make help     - Mostrar esta ayuda"
 

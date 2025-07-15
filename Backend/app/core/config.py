@@ -4,7 +4,11 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
-from app import __version__
+try:
+    from app import __version__
+except ImportError:
+    # When running from within app directory
+    from __init__ import __version__
 
 
 class Settings(BaseSettings):
